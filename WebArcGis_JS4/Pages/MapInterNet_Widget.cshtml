@@ -1,0 +1,186 @@
+﻿@page
+@model WebArcGis_JS4.Pages.MapInterNet_WidgetModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebArcGis_JS4</title> 
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.20/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.20/"></script>
+    <script>
+
+        require(["esri/config",
+            "esri/Map",
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Feature",
+            "esri/Graphic",
+            "esri/tasks/support/Query",
+            "esri/widgets/FeatureTable",
+            "esri/layers/FeatureLayer",
+            "esri/layers/GraphicsLayer",
+            "esri/layers/MapImageLayer",
+            "esri/layers/BaseDynamicLayer",
+            "esri/Basemap",
+            "esri/layers/TileLayer",
+            "esri/layers/ImageryLayer",
+            "esri/widgets/Home",
+            "esri/layers/support/Field",
+            "esri/geometry/Point",
+            "esri/widgets/LayerList",
+            "esri/widgets/Swipe",
+            "esri/widgets/AreaMeasurement2D",
+            "esri/widgets/DistanceMeasurement2D",
+            "esri/widgets/BasemapLayerList",
+            "esri/widgets/Bookmarks",
+            "esri/widgets/Expand",
+            "esri/widgets/Compass",
+            "esri/widgets/CoordinateConversion",
+            "esri/widgets/Fullscreen",
+            "esri/widgets/ScaleBar",
+            "esri/widgets/Print"
+        ], function
+            (esriConfig,
+                Map,
+                WebMap,
+                MapView,
+                Feature,
+                Graphic,
+                Query,
+                FeatureTable,
+                FeatureLayer,
+                GraphicsLayer,
+                MapImageLayer,
+                BaseDynamicLayer,
+                Basemap,
+                TileLayer,
+                ImageryLayer,
+                Home,
+                Field,
+                Point,
+                LayerList,
+                Swipe,
+                AreaMeasurement2D,
+                DistanceMeasurement2D,
+                BasemapLayerList,
+                Bookmarks,
+                Expand,
+                Compass,
+                CoordinateConversion,
+                Fullscreen,
+                ScaleBar,
+                Print
+            )  {
+
+            var baseUrl = "http://192.168.50.28:6080/arcgis/rest/services/SampleWorldCities/MapServer";
+           
+            let layer = new MapImageLayer({
+                url: baseUrl
+            });
+
+            const map = new Map({ 
+                basemap: new Basemap({ baseLayers: [layer] }),
+                logo: false,  //不显示Esri的logo
+
+            });
+            const view = new MapView({
+                map: map,
+                center: [125.04658531829789, 41.978062677899004],
+                zoom: 3, // Zoom level
+                container: "viewDiv" // Div的Id
+            });
+            //==============坐标小部件
+            var ccWidget = new CoordinateConversion({
+                view: view
+            });
+            view.ui.add(ccWidget, "bottom-left");
+            //===============比例尺小部件
+            let scaleBar = new ScaleBar({
+                view: view,
+                style: "ruler"
+            });
+            view.ui.add(scaleBar, {
+                position: "bottom-left"
+            });
+            //===============指南针小部件
+            var compassWidget = new Compass({
+                view: view
+            });
+            view.ui.add(compassWidget, "bottom-right");
+            //===============图层小部件
+            let basemapLayerList = new BasemapLayerList({
+                basemapTitle: "图层列表",
+                view: view
+            });
+            var basemapLayerListExpand = new Expand({
+                view: view,
+                content: basemapLayerList,
+                expandTooltip: "图层",
+                expanded: false
+            });
+            view.ui.add(basemapLayerListExpand, "top-left");
+            //===============主页小部件
+            let homeWidget = new Home({
+                view: view
+            });
+            view.ui.add(homeWidget, "top-left");
+            //===============全屏小部件
+            fullscreen = new Fullscreen({
+                view: view
+            });
+            view.ui.add(fullscreen, "top-left");
+            //===============书签小部件
+            const bookmarks = new Bookmarks({
+                view: view,
+                editingEnabled: true
+            });
+            const bkExpand = new Expand({
+                view: view,
+                content: bookmarks,
+                expandTooltip: "书签",
+                expanded: false
+            });
+            view.ui.add(bkExpand, "top-left");
+            //===============测量小部件
+            let distanceWidget = new DistanceMeasurement2D({
+                view: view
+            });
+            var distanceExpand = new Expand({
+                view: view,
+                content: distanceWidget,
+                expandTooltip: "距离测量",
+                expanded: false
+            });
+            view.ui.add(distanceExpand, "top-left");
+
+            let areaWidget = new AreaMeasurement2D({
+                view: view
+            });
+            var areaExpand = new Expand({
+                view: view,
+                content: areaWidget,
+                expandTooltip: "面积测量",
+                expanded: false
+            });
+            view.ui.add(areaExpand, "top-left");
+
+        });
+    </script>
+</head>
+<body>
+    <div id="viewDiv"></div>
+</body>
+</html>

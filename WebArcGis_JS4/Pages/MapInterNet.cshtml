@@ -1,0 +1,79 @@
+﻿@page
+@model WebArcGis_JS4.Pages.MapInterNetModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebArcGis_JS4</title> 
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.20/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.20/"></script>
+    <script>
+
+        require(["esri/config",
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/MapImageLayer",
+            "esri/Basemap",
+            "esri/layers/Layer"
+        ], function (
+            esriConfig,
+            Map,
+            MapView,
+            MapImageLayer,
+            Basemap,
+            Layer) {
+
+            var baseUrl = "http://192.168.50.28:6080/arcgis/rest/services/SampleWorldCities/MapServer";
+           
+            let layer = new MapImageLayer({
+                url: baseUrl
+            });
+
+            const map = new Map({ 
+                basemap: new Basemap({ baseLayers: [layer] }),
+                logo: false,  //不显示Esri的logo
+
+            });
+            const view = new MapView({
+                map: map,
+                center: [125.04658531829789, 41.978062677899004],
+                zoom: 13, // Zoom level
+                container: "viewDiv" // Div的Id
+            });
+            //监听单击事件
+            view.on("click", function (event) {
+
+                console.log(event);
+                console.log("x:" + event.mapPoint.x);
+                console.log("y:" + event.mapPoint.y);
+                console.log("longitude:" + event.mapPoint.longitude);
+                console.log("latitude:" + event.mapPoint.latitude);
+            });
+
+            //监听比例尺编号
+            var handle = view.watch("scale", function (newValue, oldValue, propertyName, target) {
+                console.log(propertyName + " changed from " + oldValue + " to " + newValue);
+            });
+            //移除监听
+            //handle.remove();
+
+        });
+    </script>
+</head>
+<body>
+    <div id="viewDiv"></div>
+</body>
+</html>

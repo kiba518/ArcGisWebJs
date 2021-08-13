@@ -1,0 +1,176 @@
+﻿@page
+@model WebArcGis_JS4.Pages.MapInterNet_FeatureLayerModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebArcGis_JS4</title> 
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.20/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.20/"></script>
+    <script>
+
+        require(["esri/config",
+            "esri/Map",
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Feature",
+            "esri/Graphic",
+            "esri/tasks/support/Query",
+            "esri/widgets/FeatureTable",
+            "esri/layers/FeatureLayer",
+            "esri/layers/GraphicsLayer",
+            "esri/layers/MapImageLayer",
+            "esri/layers/BaseDynamicLayer",
+            "esri/Basemap",
+            "esri/layers/TileLayer",
+            "esri/layers/ImageryLayer",
+            "esri/widgets/Home",
+            "esri/layers/support/Field",
+            "esri/geometry/Point",
+            "esri/widgets/LayerList",
+            "esri/widgets/Swipe",
+            "esri/widgets/AreaMeasurement2D",
+            "esri/widgets/DistanceMeasurement2D",
+            "esri/widgets/BasemapLayerList",
+            "esri/widgets/Bookmarks",
+            "esri/widgets/Expand",
+            "esri/widgets/Compass",
+            "esri/widgets/CoordinateConversion",
+            "esri/widgets/Fullscreen",
+            "esri/widgets/ScaleBar",
+            "esri/widgets/Print"
+        ], function
+            (esriConfig,
+                Map,
+                WebMap,
+                MapView,
+                Feature,
+                Graphic,
+                Query,
+                FeatureTable,
+                FeatureLayer,
+                GraphicsLayer,
+                MapImageLayer,
+                BaseDynamicLayer,
+                Basemap,
+                TileLayer,
+                ImageryLayer,
+                Home,
+                Field,
+                Point,
+                LayerList,
+                Swipe,
+                AreaMeasurement2D,
+                DistanceMeasurement2D,
+                BasemapLayerList,
+                Bookmarks,
+                Expand,
+                Compass,
+                CoordinateConversion,
+                Fullscreen,
+                ScaleBar,
+                Print
+            )  {
+
+            var baseUrl = "http://192.168.50.28:6080/arcgis/rest/services/SampleWorldCities/MapServer";
+           
+            let layer = new MapImageLayer({
+                url: baseUrl
+            });
+
+            const map = new Map({ 
+                basemap: new Basemap({ baseLayers: [layer] }),
+                logo: false,  //不显示Esri的logo
+
+            });
+               
+            let featuresSource = [
+                {
+                    geometry: {
+                        type: "point",
+                        x: 61.94658531829789,
+                        y: 41.978062677899004
+
+                    },
+                    attributes: {
+                        ObjectID: 1,
+                        Name: "Kiba",
+                        MsgTime: Date.now(),
+                        Msg: "Hello Kiba"
+                    }
+                },
+                {
+                    geometry: {
+                        type: "point",
+                        latitude: 41.04658531829789,
+                        longitude: 60.978062677899004
+
+                    },
+                    attributes: {
+                        ObjectID: 2,
+                        Name: "Kiba518",
+                        MsgTime: Date.now(),
+                        Msg: "Hello Kiba518"
+                    }
+                }
+            ];
+            // 弹出框设置
+            const popupTemplate = {
+                "title": "数据信息",
+                "content": "<b>Id:</b> {ObjectID}<br><b>姓名:</b> {Name}<br><b>时间:</b> {MsgTime}<br><b>消息:</b> {Msg}"
+            }
+
+            let layer1 = new FeatureLayer({
+                source: featuresSource,   
+                objectIdField: "ObjectID",//唯一标识字段 
+                fields://定义图层中可用字段 name字段名  alias别名  type类型
+                    [{
+                        name: "ObjectID",
+                        alias: "ObjectID",
+                        type: "oid"
+                    }, {
+                        name: "Name",
+                        alias: "Name",
+                        type: "string"
+                    },
+                    {
+                        name: "MsgTime",
+                        alias: "MsgTime",
+                        type: "date"
+                    },
+                    {
+                        name: "Msg",
+                        alias: "Msg",
+                        type: "string"
+                    }], 
+                popupTemplate: popupTemplate
+            });
+            map.add(layer1);
+            const view = new MapView({
+                map: map,
+                center: [65.04658531829789, 41.978062677899004],
+                zoom: 13, // Zoom level
+                container: "viewDiv" // Div的Id
+            });
+           
+
+        });
+    </script>
+</head>
+<body>
+    <div id="viewDiv"></div>
+</body>
+</html>
